@@ -8,8 +8,6 @@ This is a sample app I've done on [Arduino Day 2014](http://day.arduino.cc/) ([G
 2. The potentiometer lets you control the pace of the spinner. 
 3. You're happy.
 
-**Made with love.** 
-
-(sorta)
+**Made with love.** *(sorta)*
 
 ![Snapshot](20140329_180041.jpg)
