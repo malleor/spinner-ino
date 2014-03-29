@@ -17,18 +17,22 @@ void setup()  {
   Serial.println("I'm in.");
 }
 
-void loop()  { 
+void setSpinner(float frequency)  {
   for(int i=0; i<nleds; ++i) {
     float time = millis() / 1e+3;
-    int brightness = MAX_BRI/2 + MAX_BRI/2*sin(6.283185*( phase[i] + time * freq ));
+    int brightness = MAX_BRI/2 + MAX_BRI/2*sin(6.283185*( phase[i] + time * frequency ));
     
     // light up the led
     analogWrite(leds[i], brightness);    
   }   
-  
+}
+
+void loop()  { 
+  // light the LEDs
+  setSpinner(freq);
   delay(10);                     
   
-  // read the encoder
+  // read the encoder; modify frequency
   int pot_pos = analogRead(0);
   int pot_neg = analogRead(1);
   if(pot_pos > 0) {    
