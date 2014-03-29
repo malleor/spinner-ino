@@ -9,6 +9,10 @@ void setup()  {
   for(int i=0; i<nleds; ++i) {
     pinMode(leds[i], OUTPUT);
   }
+  
+  // set up logging
+  Serial.begin(9600);
+  Serial.println("I'm in.");
 }
 
 void loop()  { 
@@ -22,5 +26,12 @@ void loop()  {
   
   // wait for 30 milliseconds to see the dimming effect    
   delay(10);                     
+  
+  // read the encoder
+  int potential = analogRead(0);
+  if(potential > 0) {
+    Serial.print("potential = ");
+    Serial.println(potential);
+  }
 }
 
