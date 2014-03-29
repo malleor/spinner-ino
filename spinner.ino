@@ -1,3 +1,11 @@
+// https://github.com/malleor/spinner-ino
+
+#include <Bridge.h>
+#include <YunServer.h>
+#include <YunClient.h>
+
+YunServer server;
+
 const int nleds = 4;
 const int leds[nleds] = { 6, 9, 10, 11 };
 
@@ -15,6 +23,11 @@ void setup()  {
   // set up logging
   Serial.begin(9600);
   Serial.println("I'm in.");
+  
+  // set up webserver
+  Bridge.begin();
+  server.listenOnLocalhost();
+  server.begin();
 }
 
 void setSpinner(float frequency)  {
@@ -27,23 +40,45 @@ void setSpinner(float frequency)  {
   }   
 }
 
+float readFrequency(float prev_freq)  {
+  int pot_pos = analogRead(0);
+  int pot_neg = analogRead(1);
+  
+  static const bool LOG_FREQ = false;
+  
+  if(pot_pos > 0) {    
+    prev_freq *= FREQ_BOOST;
+    if(LOG_FREQ) {
+      Serial.print("freq = ");
+      Serial.println(prev_freq);
+    }
+  }
+  
+  if(pot_neg > 0) {    
+    prev_freq /= FREQ_BOOST;
+    if(LOG_FREQ) {
+      Serial.print("freq = ");
+      Serial.println(prev_freq);
+    }
+  }
+  
+  return prev_freq;
+}
+
 void loop()  { 
   // light the LEDs
   setSpinner(freq);
   delay(10);                     
   
   // read the encoder; modify frequency
-  int pot_pos = analogRead(0);
-  int pot_neg = analogRead(1);
-  if(pot_pos > 0) {    
-    freq *= FREQ_BOOST;
-    Serial.print("freq = ");
-    Serial.println(freq);
-  }
-  if(pot_neg > 0) {    
-    freq /= FREQ_BOOST;
-    Serial.print("freq = ");
-    Serial.println(freq);
+  freq = readFrequency(freq);
+  
+  // handle Bridge connection
+  YunClient client = server.accept();
+  if(client) {
+    Serial.println("client connected");
+    client.print("HELLO");
+    client.stop();
   }
 }
 
